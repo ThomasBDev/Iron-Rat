@@ -14,7 +14,7 @@ background = white
 
 -- Een plaatje om te tekenen.
 drawing :: Picture
-drawing = circle 30
+drawing = circle 100
 
 
 
