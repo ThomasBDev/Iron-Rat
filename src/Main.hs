@@ -8,8 +8,9 @@ window = InWindow "Nice Window" (1200, 800) (10,10)
 background :: Color
 background = white
 
-drawing :: Picture
+drawing, drawing1 :: Picture
 drawing = circle 30
+drawing1 = translate 100 (-300) (circle 100)
 
 main :: IO ()
 main = display window background (render (movePlane initialState))
@@ -31,5 +32,5 @@ movePlane game = game{planePos = (x,y)}
 render :: GameState -> Picture
 render game = pictures [plane]
     where
-    plane = uncurry translate (planePos game) drawing
+    plane = uncurry translate (planePos game) drawing1
 
