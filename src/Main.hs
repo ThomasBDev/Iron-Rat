@@ -26,25 +26,49 @@ pictureList = [drawing, drawing1, drawing2]
 
 main :: IO ()
 --     display :: Display -> Color -> Picture
-main = display window background (render (movePlane initialState) pictureList)
+main = display window background (render (movePlane North initialState) pictureList)
 
 
 -- Deze GameState bevat nu alleen nog 1 Plane.
-data GameState = Game 
+{-data GameState = Game 
     { planePos :: (Float, Float), planeSpeed :: Float }
 
 initialState :: GameState
 initialState = Game 
-    { planePos = (0.0,0.0), planeSpeed = 0.0 }
+     { planePos = (0.0,0.0), planeSpeed = 0.0 }-}
 
-movePlane :: GameState -> GameState
-movePlane game = game { planePos = (x, y) }
+data Direction = North | East | South | West
+    
+data GameState = Game { player :: Player , planeSpeed :: Float }
+
+initialState :: GameState
+initialState = Game {player = startPlayer, planeSpeed = 0.0 }
+
+data Player = PlayerInfo {playerPos :: (Float, Float), health :: Int, picture :: Picture}
+
+startPlayer :: Player
+startPlayer = PlayerInfo {playerPos = (0.0,0.0), health = 100, picture = circle 30}
+
+movePlane :: Direction -> GameState -> GameState
+movePlane North game = game{player = (player game) { playerPos = (xv, yv)}}
     where
-    x = 800
-    y = 0
+    (x, y) = playerPos (player game)
+    (xv, yv) = (x, y+10)
+movePlane East game = game{player = (player game) { playerPos = (xv, yv)}}
+    where
+    (x, y) = playerPos (player game)
+    (xv, yv) = (x+10, y)
+movePlane South game = game{player = (player game) { playerPos = (xv, yv)}}
+    where
+    (x, y) = playerPos (player game)
+    (xv, yv) = (x, y-10)
+movePlane West game = game{player = (player game) { playerPos = (xv, yv)}}
+    where
+    (x, y) = playerPos (player game)
+    (xv, yv) = (x-10, y)
 
 -- Neemt een GameState en lijst van Pictures en zet het om naar één Picture voor de display methode in main.
 render :: GameState -> [Picture] -> Picture
 render game pics = pictures (map movePics pics)
     where
-    movePics = uncurry translate (planePos game)
+    movePics = uncurry translate (playerPos (player game))
