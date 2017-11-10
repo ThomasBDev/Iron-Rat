@@ -26,7 +26,7 @@ drawing2 = translate (-400) (-100) (circle 100)
 
 
 pictureList :: [Picture]
-pictureList = [ground, drawing, drawing1, drawing2, playerSprite startPlayer]
+pictureList = [ground, drawing, drawing1, drawing2]
 
 -- testEnemy :: Enemy
 -- testEnemy = testEnemy { status = Alive, position = (0.0, 0.0), enemyType = Plane, sprite = drawing2 }
@@ -63,26 +63,25 @@ update :: Float ->  GameState -> GameState
 update _ game = game
 
 movePlane :: Direction -> GameState -> GameState
-movePlane North game = game{player = (player game) { playerPos = (xv, yv)}}
+movePlane North game = game{player = (player game) { playerSprite = translate 0 10 (playerSprite (player game)), playerPos = (xv, yv) }}
     where
     (x, y) = playerPos (player game)
     (xv, yv) = (x, y+10)
-movePlane East game = game{player = (player game) { playerPos = (xv, yv)}}
+movePlane East game = game{player = (player game) { playerSprite = translate 10 0 (playerSprite (player game)), playerPos = (xv, yv) }}
     where
     (x, y) = playerPos (player game)
     (xv, yv) = (x+10, y)
-movePlane South game = game{player = (player game) { playerPos = (xv, yv)}}
+movePlane South game = game{player = (player game) { playerSprite = translate 0 (-10) (playerSprite (player game)), playerPos = (xv, yv) }}
     where
     (x, y) = playerPos (player game)
     (xv, yv) = (x, y-10)
-movePlane West game = game{player = (player game) { playerPos = (xv, yv)}}
+movePlane West game = game{player = (player game){  playerSprite = translate (-10) 0 (playerSprite (player game)), playerPos = (xv, yv) }}
     where
     (x, y) = playerPos (player game)
     (xv, yv) = (x-10, y)
 
 -- Neemt een GameState en lijst van Pictures en zet het om naar één Picture voor de display methode in main.
 render :: GameState -> Picture
-render game = pictures (map movePics pics)
+render game = pictures pics
     where
-    movePics = uncurry translate (playerPos (player game))
-    pics = spriteList game 
+    pics = spriteList game ++ [(playerSprite(player game))]
