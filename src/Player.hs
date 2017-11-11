@@ -2,4 +2,4 @@ module Player where
 
 import Graphics.Gloss
 
-data Player = PlayerInfo {playerPos :: (Float, Float), health :: Int, playerSprite :: Picture}
+data Player = PlayerInfo {playerX :: Float, playerY :: Float, health :: Int, playerSprite :: Picture}

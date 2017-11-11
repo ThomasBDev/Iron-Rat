@@ -62,7 +62,7 @@ driehoek = polygon trianglePath
 vierkant = polygon (rectanglePath 100 100)
 
 startPlayer :: Player
-startPlayer = PlayerInfo { playerPos = (0.0,0.0), health = 100, playerSprite = color blue vierkant }
+startPlayer = PlayerInfo { playerX = 0.0, playerY = 0.0, health = 100, playerSprite = color blue vierkant }
 
 
 
@@ -74,7 +74,7 @@ newUpdate :: Float -> NewGameState -> NewGameState
 newUpdate _ game = game
 
 
-
+{-
 movePlayer :: Direction -> GameState -> GameState
 movePlayer North game = game { player = (player game) { playerSprite = translate 0 10 (playerSprite (player game)), playerPos = (xv, yv) } }
     where
@@ -91,26 +91,34 @@ movePlayer South game = game { player = (player game) { playerSprite = translate
 movePlayer West game  = game { player = (player game) { playerSprite = translate (-10) 0 (playerSprite (player game)), playerPos = (xv, yv) } }
     where
     (x, y) = playerPos (player game)
-    (xv, yv) = (x-10, y)
+    (xv, yv) = (x-10, y)-} 
 -- ================================================================================================================================
 -- ================================================================================================================================   
 newMovePlayer :: Direction -> NewGameState -> NewGameState
-newMovePlayer North game = game { newPlayer = (newPlayer game) { playerSprite = translate 0 10 (playerSprite (newPlayer game)), playerPos = (xv, yv) } }
+newMovePlayer North game = game { newPlayer = (newPlayer game) {playerX = xv, playerY = yv} }
                          where
-                         (x, y) = playerPos (newPlayer game)
-                         (xv, yv) = (x, y+10)
-newMovePlayer East game  = game { newPlayer = (newPlayer game) { playerSprite = translate 10 0 (playerSprite (newPlayer game)), playerPos = (xv, yv) } }
+                         x= playerX (newPlayer game)
+                         xv = x
+                         y = playerY (newPlayer game)
+                         yv = y + 10
+newMovePlayer East game = game { newPlayer = (newPlayer game) {playerX = xv, playerY = yv} }
                          where
-                         (x, y) = playerPos (newPlayer game)
-                         (xv, yv) = (x+10, y)
-newMovePlayer South game = game { newPlayer = (newPlayer game) { playerSprite = translate 0 (-10) (playerSprite (newPlayer game)), playerPos = (xv, yv) } }
+                         x= playerX (newPlayer game)
+                         xv = x + 10
+                         y = playerY (newPlayer game)
+                         yv = y
+newMovePlayer South game = game { newPlayer = (newPlayer game) {playerX = xv, playerY = yv} }
                          where
-                         (x, y) = playerPos (newPlayer game)
-                         (xv, yv) = (x, y-10)
-newMovePlayer West game  = game { newPlayer = (newPlayer game) { playerSprite = translate (-10) 0 (playerSprite (newPlayer game)), playerPos = (xv, yv) } }
+                         x= playerX (newPlayer game)
+                         xv = x
+                         y = playerY (newPlayer game)
+                         yv = y - 10
+newMovePlayer West game = game { newPlayer = (newPlayer game) {playerX = xv, playerY = yv} }
                          where
-                         (x, y) = playerPos (newPlayer game)
-                         (xv, yv) = (x-10, y)
+                         x= playerX (newPlayer game)
+                         xv = x - 10
+                         y = playerY (newPlayer game)
+                         yv = y
     
 
 
@@ -143,4 +151,4 @@ render game = pictures pics
 newRender :: NewGameState -> Picture
 newRender game = pictures pics
                where
-               pics = backgroundList game ++ map sprite (enemyList game) ++ [playerSprite (newPlayer game)]
+               pics = backgroundList game ++ map sprite (enemyList game) ++ [translate (playerX(newPlayer game)) (playerY(newPlayer game)) (playerSprite (newPlayer game))]
