@@ -151,4 +151,7 @@ render game = pictures pics
 newRender :: NewGameState -> Picture
 newRender game = pictures pics
                where
-               pics = backgroundList game ++ map sprite (enemyList game) ++ [translate (playerX(newPlayer game)) (playerY(newPlayer game)) (playerSprite (newPlayer game))]
+               pics = background ++ enemies ++ player
+               player = [translate (playerX(newPlayer game)) (playerY(newPlayer game)) (playerSprite (newPlayer game))]
+               enemies = map sprite (enemyList game)
+               background = backgroundList game
