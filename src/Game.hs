@@ -10,7 +10,7 @@ import Background
 
 data Direction = North | East | South | West
 
-data GameState = Game { player :: Player, enemyList :: [Enemy], backgroundList :: [Background] }
+data GameState = Game { player :: Player, enemyList :: [Enemy], backgroundList :: [Background] , wdown :: Bool, adown :: Bool, sdown :: Bool, ddown :: Bool}
 
 
 
@@ -45,12 +45,12 @@ startPlayer :: Player
 startPlayer = PlayerInfo { playerX = 0.0, playerY = 0.0, health = 100, playerSprite = color blue vierkant }
 
 initialState :: GameState
-initialState = Game { player = startPlayer, enemyList = enemies, backgroundList = [backGround] }
+initialState = Game { player = startPlayer, enemyList = enemies, backgroundList = [backGround] , wdown = False, adown = False, sdown = False, ddown = False}
 
 
 
 update :: Float ->  GameState -> GameState
-update _ game = game
+update _ game = checkOnKeys game
 
 
 
@@ -94,3 +94,15 @@ render game = pictures pics
             backgroundPics = map moveBackgroundPicture (backgroundList game)
             enemyPics = map moveEnemyPicture (enemyList game)
             playerPic = [movePlayerPicture (player game)]
+
+checkOnKeys :: GameState -> GameState
+checkOnKeys game | w = movePlayer North game
+                 | a = movePlayer West game
+                 | s = movePlayer South game
+                 | d = movePlayer East game
+                 | otherwise = game
+    where
+    w = wdown game 
+    a = adown game
+    s = sdown game
+    d = ddown game
