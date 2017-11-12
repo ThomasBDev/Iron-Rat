@@ -74,22 +74,8 @@ movePlayer West game  = game { player = (player game) { playerX = xv } }
                       x= playerX (player game)
                       xv = x - 10
                       
--- Functie die de positie van alle vijanden aanpast.
--- De functie geeft dus een GameState terug waarin de enemyX en enemyY van alle enemies zijn aangepast.
-moveEnemies :: GameState -> GameState
-moveEnemies game = game { enemyList = newEnemyList }
-                 where
-                 newEnemyList = map moveEnemy (enemyList game)
-                 
--- Functie die de positi van alle achtergrondobjecten aanpast.
--- De functie geeft dus een GameState terug waarin de backX en backY van alle backgroundObjecten zijn aangepast.
-moveBackgrounds :: GameState -> GameState
-moveBackgrounds game = game { backgroundList = newBackgroundList }
-                     where
-                     newBackgroundList = map moveBackground (backgroundList game)
-
-                     
-                     
+-- Functie die de positie van alle vijanden en achtergrondobjecten aanpast.
+-- De functie geeft dus een GameState terug waarin de enemyX, enemyY, backX en backY van alle vijanden en achtergrondobjecten zijn aangepast.       
 combinedMove :: GameState -> GameState
 combinedMove game = game { enemyList = newEnemyList, backgroundList = newBackgroundList }
                   where
@@ -102,6 +88,8 @@ combinedMove game = game { enemyList = newEnemyList, backgroundList = newBackgro
 render :: GameState -> Picture
 render game = pictures pics
             where
+            -- De volgorde bepaalt welke Pictures als eerste worden gerendered.
+            -- Meest linkse gaan als eerste.
             pics = backgroundPics ++ enemyPics ++ playerPic
             backgroundPics = map moveBackgroundPicture (backgroundList game)
             enemyPics = map moveEnemyPicture (enemyList game)
