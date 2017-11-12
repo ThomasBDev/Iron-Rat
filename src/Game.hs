@@ -6,48 +6,11 @@ import Graphics.Gloss.Data.ViewPort
 
 import Player
 import Enemies
-
-
-window :: Display
---                Naam van de Window, (Breedte Window, Hoogte Window) (X-positie Window in scherm, Y-positie Window in scherm)
-window = InWindow "Nice Window" (1000, 600) (10,10)
-
-background :: Color
-background = white
-
--- Hoeveel keer per seconde een GameState wordt gerendered.
-fps :: Int
-fps = 60
-
--- (0, 0) = middelpunt Window.
--- X vergroten --> naar rechts, Y vergroten --> naar boven.
-ground, drawing, drawing1, drawing2 :: Picture
-ground = translate 0 1200 (color green (polygon (rectanglePath 1000 2400)))
-drawing = circle 10
-drawing1 = translate 200 200 (circle 30)
-drawing2 = translate (-400) (-100) (circle 100)
-
-pictureList :: [Picture]
-pictureList = [ground, drawing, drawing1, drawing2]
-
-
+import Background
 
 data Direction = North | East | South | West
     
-data GameState = Game { player :: Player , planeSpeed :: Float , spriteList :: [Picture] }
-
-
--- ================================================================================================================================
--- ================================================================================================================================
-data NewGameState = NewGame { newPlayer :: Player, enemyList :: [Enemy], backgroundList :: [Picture] }
-
-initialState :: GameState
-initialState = Game { player = startPlayer, planeSpeed = 0.0, spriteList = pictureList }
--- ================================================================================================================================
--- ================================================================================================================================
-newInitialState :: NewGameState
-newInitialState = NewGame { newPlayer = startPlayer, enemyList = [testEnemy, testEnemy1], backgroundList = pictureList }
-
+data GameState = Game { player :: Player, enemyList :: [Enemy], backgroundList :: [Background] }
 
 
 -- Polygon testwaardes
@@ -61,97 +24,78 @@ lijn = line trianglePath
 driehoek = polygon trianglePath
 vierkant = polygon (rectanglePath 100 100)
 
+
+
+window :: Display
+--                Naam van de Window, (Breedte Window, Hoogte Window) (X-positie Window in scherm, Y-positie Window in scherm)
+window = InWindow "Nice Window" (1000, 600) (10,10)
+
+-- De kleur van de achtergrond onder de backgroundObjecten.
+backgroundColor :: Color
+backgroundColor = white
+
+-- Hoeveel keer per seconde een GameState wordt gerendered.
+fps :: Int
+fps = 60
+
+
+
 startPlayer :: Player
 startPlayer = PlayerInfo { playerX = 0.0, playerY = 0.0, health = 100, playerSprite = color blue vierkant }
+
+initialState :: GameState
+initialState = Game { player = startPlayer, enemyList = enemies, backgroundList = [backGround] }
 
 
 
 update :: Float ->  GameState -> GameState
 update _ game = game
--- ================================================================================================================================
--- ================================================================================================================================
-newUpdate :: Float -> NewGameState -> NewGameState
-newUpdate _ game = game
 
 
-{-
-movePlayer :: Direction -> GameState -> GameState
-movePlayer North game = game { player = (player game) { playerSprite = translate 0 10 (playerSprite (player game)), playerPos = (xv, yv) } }
-    where
-    (x, y) = playerPos (player game)
-    (xv, yv) = (x, y+10)
-movePlayer East game  = game { player = (player game) { playerSprite = translate 10 0 (playerSprite (player game)), playerPos = (xv, yv) } }
-    where
-    (x, y) = playerPos (player game)
-    (xv, yv) = (x+10, y)
-movePlayer South game = game { player = (player game) { playerSprite = translate 0 (-10) (playerSprite (player game)), playerPos = (xv, yv) } }
-    where
-    (x, y) = playerPos (player game)
-    (xv, yv) = (x, y-10)
-movePlayer West game  = game { player = (player game) { playerSprite = translate (-10) 0 (playerSprite (player game)), playerPos = (xv, yv) } }
-    where
-    (x, y) = playerPos (player game)
-    (xv, yv) = (x-10, y)-} 
--- ================================================================================================================================
--- ================================================================================================================================   
-newMovePlayer :: Direction -> NewGameState -> NewGameState
-newMovePlayer North game = game { newPlayer = (newPlayer game) {playerX = xv, playerY = yv} }
-                         where
-                         x= playerX (newPlayer game)
-                         xv = x
-                         y = playerY (newPlayer game)
-                         yv = y + 10
-newMovePlayer East game = game { newPlayer = (newPlayer game) {playerX = xv, playerY = yv} }
-                         where
-                         x= playerX (newPlayer game)
-                         xv = x + 10
-                         y = playerY (newPlayer game)
-                         yv = y
-newMovePlayer South game = game { newPlayer = (newPlayer game) {playerX = xv, playerY = yv} }
-                         where
-                         x= playerX (newPlayer game)
-                         xv = x
-                         y = playerY (newPlayer game)
-                         yv = y - 10
-newMovePlayer West game = game { newPlayer = (newPlayer game) {playerX = xv, playerY = yv} }
-                         where
-                         x= playerX (newPlayer game)
-                         xv = x - 10
-                         y = playerY (newPlayer game)
-                         yv = y
-    
 
-
--- Functie die alle vijanden naar beneden beweegt.
-moveEnemies :: NewGameState -> NewGameState
+-- Functie die de positie van alle vijanden aanpast.
+-- De functie geeft dus een GameState terug waarin de enemyX en enemyY van alle enemies zijn aangepast.
+moveEnemies :: GameState -> GameState
 moveEnemies game = game { enemyList = newEnemyList }
                  where
                  newEnemyList = map moveEnemy (enemyList game)
-                
--- Functie die alle achtergrondobjecten naar beneden beweegt.
-moveBackground :: NewGameState -> NewGameState
-moveBackground game = game { backgroundList = newBackgroundList }
-                    where
-                    newBackgroundList = map moveSingleBackground (backgroundList game)
-    
--- Functie die een achtergrondobject naar beneden beweegt.    
--- Dit zou per cyclus moeten worden uitgevoerd zodat het level autoscrollt.
-moveSingleBackground :: Picture -> Picture
-moveSingleBackground pic = translate 0 5 pic
-                
-                
 
--- Neemt een GameState en lijst van Pictures en zet het om naar één Picture voor de display methode in main.
+-- Functie die de positi van alle achtergrondobjecten aanpast.
+-- De functie geeft dus een GameState terug waarin de backX en backY van alle backgroundObjecten zijn aangepast.
+moveBackgrounds :: GameState -> GameState
+moveBackgrounds game = game { backgroundList = newBackgroundList }
+                     where
+                     newBackgroundList = map moveBackground (backgroundList game)
+
+
+
+-- Pas playerX of playerY aan als de speler W, A, S of D indrukt.
+-- De nieuwe playerX en playerY waardes worden dan in render gebruikt om ook de Picture aan te passen.
+movePlayer :: Direction -> GameState -> GameState
+movePlayer North game = game { player = (player game) { playerY = yv } }
+                      where
+                      y = playerY (player game)
+                      yv = y + 10
+movePlayer East game  = game { player = (player game) { playerX = xv } }
+                      where
+                      x= playerX (player game)
+                      xv = x + 10
+movePlayer South game = game { player = (player game) { playerY = yv } }
+                      where
+                      y = playerY (player game)
+                      yv = y - 10
+movePlayer West game  = game { player = (player game) { playerX = xv } }
+                      where
+                      x= playerX (player game)
+                      xv = x - 10
+                         
+
+
+-- Neemt een GameState en lijst van Pictures en zet het om naar één Picture voor de display methode in main.  
 render :: GameState -> Picture
 render game = pictures pics
-    where
-    pics = spriteList game ++ [(playerSprite(player game)), sprite testEnemy, sprite testEnemy1]
--- ================================================================================================================================
--- ================================================================================================================================   
-newRender :: NewGameState -> Picture
-newRender game = pictures pics
-               where
-               pics = background ++ enemies ++ player
-               player = [translate (playerX(newPlayer game)) (playerY(newPlayer game)) (playerSprite (newPlayer game))]
-               enemies = map sprite (enemyList game)
-               background = backgroundList game
+            where
+            pics = backgroundPics ++ enemyPics ++ playerPic
+            backgroundPics = map moveBackgroundPicture (backgroundList game)
+            enemyPics = map moveEnemyPicture (enemyList game)
+            playerPic = [movePlayerPicture (player game)]

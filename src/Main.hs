@@ -8,12 +8,6 @@ import Game
 
 main :: IO ()
 --     display :: Display -> Color -> Picture
--- main = play window background fps initialState render handleKeys update
-
--- ================================================================================================================================
--- ================================================================================================================================
-main = play window background fps newInitialState newRender newHandleKeys newUpdate
-
-
-    --where
---displaying = display window background (render (movePlayers North initialState) pictureList)
+main = play window backgroundColor fps initialState render handleKeys update
+     -- where
+     -- displaying = display window background (render (movePlayers North initialState) pictureList)
