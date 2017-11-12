@@ -9,8 +9,9 @@ import Enemies
 import Background
 
 data Direction = North | East | South | West
-    
+
 data GameState = Game { player :: Player, enemyList :: [Enemy], backgroundList :: [Background] }
+
 
 
 -- Polygon testwaardes
@@ -53,22 +54,6 @@ update _ game = game
 
 
 
--- Functie die de positie van alle vijanden aanpast.
--- De functie geeft dus een GameState terug waarin de enemyX en enemyY van alle enemies zijn aangepast.
-moveEnemies :: GameState -> GameState
-moveEnemies game = game { enemyList = newEnemyList }
-                 where
-                 newEnemyList = map moveEnemy (enemyList game)
-
--- Functie die de positi van alle achtergrondobjecten aanpast.
--- De functie geeft dus een GameState terug waarin de backX en backY van alle backgroundObjecten zijn aangepast.
-moveBackgrounds :: GameState -> GameState
-moveBackgrounds game = game { backgroundList = newBackgroundList }
-                     where
-                     newBackgroundList = map moveBackground (backgroundList game)
-
-
-
 -- Pas playerX of playerY aan als de speler W, A, S of D indrukt.
 -- De nieuwe playerX en playerY waardes worden dan in render gebruikt om ook de Picture aan te passen.
 movePlayer :: Direction -> GameState -> GameState
@@ -88,9 +73,31 @@ movePlayer West game  = game { player = (player game) { playerX = xv } }
                       where
                       x= playerX (player game)
                       xv = x - 10
-                         
+                      
+-- Functie die de positie van alle vijanden aanpast.
+-- De functie geeft dus een GameState terug waarin de enemyX en enemyY van alle enemies zijn aangepast.
+moveEnemies :: GameState -> GameState
+moveEnemies game = game { enemyList = newEnemyList }
+                 where
+                 newEnemyList = map moveEnemy (enemyList game)
+                 
+-- Functie die de positi van alle achtergrondobjecten aanpast.
+-- De functie geeft dus een GameState terug waarin de backX en backY van alle backgroundObjecten zijn aangepast.
+moveBackgrounds :: GameState -> GameState
+moveBackgrounds game = game { backgroundList = newBackgroundList }
+                     where
+                     newBackgroundList = map moveBackground (backgroundList game)
 
+                     
+                     
+combinedMove :: GameState -> GameState
+combinedMove game = game { enemyList = newEnemyList, backgroundList = newBackgroundList }
+                  where
+                  newEnemyList = map moveEnemy (enemyList game)
+                  newBackgroundList = map moveBackground (backgroundList game)
 
+                  
+                  
 -- Neemt een GameState en lijst van Pictures en zet het om naar één Picture voor de display methode in main.  
 render :: GameState -> Picture
 render game = pictures pics

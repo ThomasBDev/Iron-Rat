@@ -26,6 +26,8 @@ testEnemy, testEnemy1 :: Enemy
 testEnemy  = createEnemy ( Position 0 200, Plane, vijandPic )
 testEnemy1 = createEnemy ( Position (-100) (-50), Plane, vijandPic1 )
 
+
+
 -- Maak een Enemy object aan.
 -- Picture heeft een aparte translate nodig.
 -- Anders blijft de sprite op Position 0 0 staan, terwijl position zegt, dat het Position X Y is.
@@ -34,7 +36,7 @@ createEnemy (pos, enType, pic) = Enemy { status = Alive, enemyX = 0.0, enemyY = 
                                where
                                Position xVal yVal = pos
                                newPic = translate xVal yVal pic
-
+                               
 -- Functie die de positie van een Enemy object aanpast.    
 -- Dit zou per cyclus moeten worden uitgevoerd zodat de vijanden naar beneden "vallen".
 moveEnemy :: Enemy -> Enemy

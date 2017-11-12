@@ -9,6 +9,8 @@ data Background = Back { backX :: Float, backY :: Float, backgroundSprite :: Pic
 backGround :: Background
 backGround = Back { backX = 0, backY = 1200, backgroundSprite = ground }
 
+
+
 moveBackground :: Background -> Background
 moveBackground back = back { backY = newBackY }
                     where
@@ -25,6 +27,8 @@ moveBackgroundPicture bg = translate xPos yPos pic
                          pic = backgroundSprite bg
                          
 
+                         
+                         
                          
 -- Oude Background mbv. Picture ipv. Background.
 
