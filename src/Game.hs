@@ -50,7 +50,7 @@ initialState = Game { player = startPlayer, enemyList = enemies, backgroundList 
 
 
 update :: Float ->  GameState -> GameState
-update _ game = checkOnKeys game
+update _ game = combinedMove (checkOnKeys game)
 
 
 

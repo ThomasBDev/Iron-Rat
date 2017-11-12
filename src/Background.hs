@@ -15,7 +15,7 @@ moveBackground :: Background -> Background
 moveBackground back = back { backY = newBackY }
                     where
                     newBackY = (backY back) - scrollSpeed
-                    scrollSpeed = 5
+                    scrollSpeed = 1
                     
 -- Functie die een achtergrondobject naar beneden beweegt.    
 -- Dit zou per cyclus moeten worden uitgevoerd zodat het level autoscrollt.

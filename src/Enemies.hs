@@ -42,7 +42,7 @@ createEnemy (pos, enType, pic) = Enemy { status = Alive, enemyX = 0.0, enemyY = 
 moveEnemy :: Enemy -> Enemy
 moveEnemy enemy = enemy { enemyY = ((enemyY enemy) - fallSpeed) }
                 where
-                fallSpeed = 10
+                fallSpeed = 2
                 
 -- Pas de Picture van een Enemy aan aan de hand van de enemyX en enemyY.
 -- Deze nieuwe Pictures worden dan in Render getekend.
